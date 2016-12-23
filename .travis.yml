@@ -5,17 +5,19 @@ services:
     - docker
 
 env:
-    - CGO_ENABLED=0 GOOS=linux
+    - CGO_ENABLED=0 GOOS=linux DOCKER_IMAGE_NAME=billglover/load-sink
 
 script:
     - go build -a -tags netgo -ldflags '-w'
     - go test -a -tags netgo -ldflags '-w'
-    - docker build -t billglover/load-sink .
+    - docker build -t $DOCKER_IMAGE_NAME .
+    - if [ ! -z "$TRAVIS_TAG" ]; then docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG; fi
+
 
 after_success:
   - if [ "$TRAVIS_BRANCH" == "master" ]; then
     docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
-    docker push billglover/load-sink;
+    docker push $DOCKER_IMAGE_NAME;
     fi
 
 go:
