@@ -22,7 +22,7 @@ after_success:
         echo "pushing container image $DOCKER_IMAGE_NAME"
         docker push $DOCKER_IMAGE_NAME;
       fi
-      if [ ! -z "$TRAVIS_TAG" ]; then
+    - if [ ! -z "$TRAVIS_TAG" ]; then
         echo "pushing container image $DOCKER_IMAGE_NAME:$TRAVIS_TAG"
         docker push $DOCKER_IMAGE_NAME:$TRAVIS_TAG; 
       fi
