@@ -4,13 +4,19 @@ sudo: required
 services:
     - docker
 
+env:
+    - CGO_ENABLED=0 GOOS=linux
+
 script:
     - go build -a -tags netgo -ldflags '-w'
     - go test -a -tags netgo -ldflags '-w'
     - docker build -t billglover/load-sink .
 
+after_success:
+  - if [ "$TRAVIS_BRANCH" == "master" ]; then
+    docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD";
+    docker push USER/REPO;
+    fi
+
 go:
     - 1.7
-
-env:
-    - CGO_ENABLED=0 GOOS=linux
