@@ -5,12 +5,12 @@ services:
     - docker
 
 script:
+    - go build -a -tags netgo -ldflags '-w'
+    - go test -a -tags netgo -ldflags '-w'
     - docker build -t billglover/load-sink .
 
 go:
     - 1.7
-
-gobuild_args: -a -tags netgo -ldflags '-w'
 
 env:
     - CGO_ENABLED=0 GOOS=linux
