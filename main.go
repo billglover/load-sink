@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"io"
 	"log"
 	"net/http"
 	"os"
@@ -12,15 +11,17 @@ import (
 // HealthResponse defines the structure of the response to a GET request on
 // the health API
 type HealthResponse struct {
-	Status string  `json:"status"`
-	Delay  float32 `json:"delay"`
-	Jitter float32 `json:"jitter"`
+	Status      string  `json:"status"`
+	Delay       float32 `json:"delay"`
+	Jitter      float32 `json:"jitter"`
+	PayloadSize int32   `json:"payloadsize"`
 }
 
 var apiAddress string
 var healthAddress string
 var responseDelay float32
 var responseJitter float32
+var payloadSize int32
 
 func init() {
 	if apiAddress = os.Getenv("API_ADDRESS"); apiAddress == "" {
@@ -44,14 +45,15 @@ func main() {
 
 	apiMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "text/plain")
-		io.WriteString(w, "hello world")
+		w.Write(RandStringBytesMaskImprSrc(1000))
 	})
 
 	healthMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		res := &HealthResponse{
-			Status: "ok",
-			Delay:  responseDelay,
-			Jitter: responseJitter,
+			Status:      "ok",
+			Delay:       responseDelay,
+			Jitter:      responseJitter,
+			PayloadSize: payloadSize,
 		}
 
 		resBytes, _ := json.Marshal(res)
