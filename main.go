@@ -9,13 +9,21 @@ import (
 )
 
 // HealthResponse defines the structure of the response to a GET request on
-// the health API
+// the health API endpoint
 type HealthResponse struct {
 	Status          string `json:"status"`
 	Delay           int    `json:"delay"`
 	Jitter          int    `json:"jitter"`
 	PayloadSize     int    `json:"size"`
 	PayloadVariance int    `json:"variance"`
+}
+
+// APIResponse defines the structure of the response to a GET request on
+// the main API endpoint
+type APIResponse struct {
+	Status  int    `json:"status"`
+	Delay   int    `json:"delay"`
+	Payload []byte `json:"string"`
 }
 
 func main() {
@@ -41,8 +49,16 @@ func main() {
 	var healthMux = http.NewServeMux()
 
 	apiMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "text/plain")
-		w.Write(RandStringBytesMaskImprSrc(*payloadSize + *payloadVar))
+		res := &APIResponse{
+			Status:  http.StatusOK,
+			Delay:   *responseDelay, // this will need to include jitter so needs to be calculated
+			Payload: RandStringBytesMaskImprSrc(*payloadSize + *payloadVar),
+		}
+
+		resBytes, _ := json.Marshal(res)
+
+		w.Header().Set("Content-Type", "application/json")
+		w.Write(resBytes)
 	})
 
 	healthMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
@@ -56,7 +72,7 @@ func main() {
 
 		resBytes, _ := json.Marshal(res)
 
-		w.Header().Set("Content-Type", "text/plain")
+		w.Header().Set("Content-Type", "application/json")
 		w.Write(resBytes)
 	})
 
