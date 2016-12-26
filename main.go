@@ -22,9 +22,10 @@ type HealthResponse struct {
 // APIResponse defines the structure of the response to a GET request on
 // the main API endpoint
 type APIResponse struct {
-	Status  int    `json:"status"`
-	Delay   int    `json:"delay"`
-	Payload []byte `json:"string"`
+	Status      int    `json:"status"`
+	Delay       int    `json:"delay"`
+	Payload     []byte `json:"string"`
+	PayloadSize int    `json:"payload_size"`
 }
 
 func main() {
@@ -50,10 +51,18 @@ func main() {
 	var healthMux = http.NewServeMux()
 
 	apiMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+
+		// calculate the desired response time
+		d := int(randomOffset(int32(*responseDelay), int32(*responseJitter)))
+
+		// calculate the desired payload size
+		s := int(randomOffset(int32(*payloadSize), int32(*payloadVar)))
+
 		res := &APIResponse{
-			Status:  http.StatusOK,
-			Delay:   totalDelay(*responseDelay, *responseJitter),
-			Payload: RandStringBytesMaskImprSrc(*payloadSize + *payloadVar),
+			Status:      http.StatusOK,
+			Delay:       d,
+			Payload:     RandStringBytesMaskImprSrc(s),
+			PayloadSize: s,
 		}
 
 		resBytes, _ := json.Marshal(res)
@@ -101,23 +110,16 @@ func main() {
 	servers.Wait()
 }
 
-func totalDelay(d, j int) (delay int) {
+func randomOffset(m int32, r int32) (t int32) {
 
-	// negative delays are capped at zero
-	if d <= 0 {
-		d = 0
-	}
-
-	// if we don't have a positive jitter, the total delay should just equal
-	// the delay provided
-	if j <= 0 {
-		delay = d
+	// handle the case where our range is zero
+	if r == 0 {
+		t = m
 		return
 	}
 
-	delay = int(rand.Int31n(2*int32(j))) - j + d
-
-	log.Printf("delay of %d and jitter of %d results in response delay of %d\n", d, j, delay)
-
+	// otherwise apply random offset to the mid-point
+	// based on the range provided
+	t = rand.Int31n(2*r) - r + m
 	return
 }
