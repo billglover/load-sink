@@ -61,7 +61,7 @@ func main() {
 		res := &APIResponse{
 			Status:      http.StatusOK,
 			Delay:       d,
-			Payload:     RandStringBytesMaskImprSrc(s),
+			Payload:     randStringBytesMaskImprSrc(s),
 			PayloadSize: s,
 		}
 
