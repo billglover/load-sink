@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"math/rand"
 	"net/http"
 	"sync"
 )
@@ -51,7 +52,7 @@ func main() {
 	apiMux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
 		res := &APIResponse{
 			Status:  http.StatusOK,
-			Delay:   *responseDelay, // this will need to include jitter so needs to be calculated
+			Delay:   totalDelay(*responseDelay, *responseJitter),
 			Payload: RandStringBytesMaskImprSrc(*payloadSize + *payloadVar),
 		}
 
@@ -98,4 +99,25 @@ func main() {
 	}()
 
 	servers.Wait()
+}
+
+func totalDelay(d, j int) (delay int) {
+
+	// negative delays are capped at zero
+	if d <= 0 {
+		d = 0
+	}
+
+	// if we don't have a positive jitter, the total delay should just equal
+	// the delay provided
+	if j <= 0 {
+		delay = d
+		return
+	}
+
+	delay = int(rand.Int31n(2*int32(j))) - j + d
+
+	log.Printf("delay of %d and jitter of %d results in response delay of %d\n", d, j, delay)
+
+	return
 }
