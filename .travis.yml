@@ -9,7 +9,7 @@ env:
 
 script:
     - go build -a -tags netgo -ldflags '-w'
-    - go test -a -tags netgo -ldflags '-w' ./...
+    - go test -v -a -tags netgo -ldflags '-w' ./...
     - docker build -t $DOCKER_IMAGE_NAME .
     - if [ ! -z "$TRAVIS_TAG" ]; then 
         docker tag $DOCKER_IMAGE_NAME:latest $DOCKER_IMAGE_NAME:$TRAVIS_TAG;
