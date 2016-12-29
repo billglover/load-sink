@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"math/rand"
 	"net/http"
+	"time"
 )
 
 // HealthResponse defines the structure of the response to a GET request on
@@ -50,6 +51,9 @@ func (h *Handler) SendResponse(w http.ResponseWriter, r *http.Request) {
 
 	resBytes, _ := json.Marshal(res)
 
+	// hold the response based on the specified delay
+	time.Sleep(time.Millisecond * time.Duration(d))
+
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resBytes)
 }
@@ -82,6 +86,6 @@ func randomOffset(m int32, r int32) (t int32) {
 
 	// otherwise apply random offset to the mid-point
 	// based on the range provided
-	t = rand.Int31n(2*r) - r + m
+	t = rand.Int31n((2*r)+1) - r + m
 	return
 }
