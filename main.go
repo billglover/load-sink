@@ -24,7 +24,7 @@ type HealthResponse struct {
 type APIResponse struct {
 	Status      int    `json:"status"`
 	Delay       int    `json:"delay"`
-	Payload     []byte `json:"string"`
+	Payload     string `json:"payload"`
 	PayloadSize int    `json:"payload_size"`
 }
 
@@ -61,7 +61,7 @@ func main() {
 		res := &APIResponse{
 			Status:      http.StatusOK,
 			Delay:       d,
-			Payload:     randStringBytesMaskImprSrc(s),
+			Payload:     string(randStringBytesMaskImprSrc(s)),
 			PayloadSize: s,
 		}
 
