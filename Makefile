@@ -10,5 +10,8 @@ docker:
 test:
 	CGO_ENABLED=0 go test -v -a -tags netgo -ldflags '-w' ./...
 
+bench:
+	vegeta attack -targets=load/targets.txt -duration=5s | tee load/results.bin | vegeta report
+
 clean:
 	go clean
