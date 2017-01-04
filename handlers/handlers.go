@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -24,6 +25,7 @@ type APIResponse struct {
 	Delay       int    `json:"delay"`
 	Payload     string `json:"payload"`
 	PayloadSize int    `json:"payload_size"`
+	Path        string `json:"path"`
 }
 
 // Handler holds the configuration for the API handler
@@ -47,7 +49,9 @@ func (h *Handler) SendResponse(w http.ResponseWriter, r *http.Request) {
 		Delay:       d,
 		Payload:     string(randStringBytesMaskImprSrc(s)),
 		PayloadSize: s,
+		Path:        r.URL.String(),
 	}
+	log.Printf("request: %s", r.RequestURI)
 
 	resBytes, _ := json.Marshal(res)
 
