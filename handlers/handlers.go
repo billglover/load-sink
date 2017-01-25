@@ -8,16 +8,6 @@ import (
 	"time"
 )
 
-// HealthResponse defines the structure of the response to a GET request on
-// the health API endpoint
-type HealthResponse struct {
-	Status          string `json:"status"`
-	Delay           int    `json:"delay"`
-	Jitter          int    `json:"jitter"`
-	PayloadSize     int    `json:"size"`
-	PayloadVariance int    `json:"variance"`
-}
-
 // APIResponse defines the structure of the response to a GET request on
 // the main API endpoint
 type APIResponse struct {
@@ -57,24 +47,6 @@ func (h *Handler) SendResponse(w http.ResponseWriter, r *http.Request) {
 
 	// hold the response based on the specified delay
 	time.Sleep(time.Millisecond * time.Duration(d))
-
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(resBytes)
-}
-
-// SendHealthResponse handles a request to the health API endpoint. It returns
-// details of the configuration currently stored in the Handler struct
-func (h *Handler) SendHealthResponse(w http.ResponseWriter, r *http.Request) {
-
-	res := &HealthResponse{
-		Status:          "ok",
-		Delay:           h.ResponseDelay,
-		Jitter:          h.ResponseJitter,
-		PayloadSize:     h.PayloadSize,
-		PayloadVariance: h.PayloadVar,
-	}
-
-	resBytes, _ := json.Marshal(res)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.Write(resBytes)
