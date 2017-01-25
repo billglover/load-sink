@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/billglover/load-sink/handlers"
+	"github.com/gorilla/mux"
 )
 
 var apiMux = http.NewServeMux()
@@ -36,7 +37,9 @@ func main() {
 	log.Printf("configuration parameter: jitter=%d\n", h.ResponseJitter)
 	log.Printf("configuration parameter: endpoint=%s\n", APIAddress)
 
-	apiMux.HandleFunc("/", h.SendResponse)
-
-	log.Fatal(http.ListenAndServe(APIAddress, apiMux))
+	r := mux.NewRouter()
+	r.HandleFunc("/", h.SendResponse)
+	http.Handle("/", r)
+	//apiMux.HandleFunc("/", h.SendResponse)
+	//log.Fatal(http.ListenAndServe(APIAddress, apiMux))
 }
