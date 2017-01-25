@@ -24,3 +24,6 @@ _testmain.go
 *.prof
 
 load-sink
+
+# OS specific files
+.DS_Store
