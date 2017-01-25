@@ -7,6 +7,9 @@ services:
 env:
     - CGO_ENABLED=0 GOOS=linux DOCKER_IMAGE_NAME=billglover/load-sink
 
+install:
+    - go get github.com/gorilla/mux
+
 script:
     - go build -a -tags netgo -ldflags '-w'
     - go test -v -a -tags netgo -ldflags '-w' ./...
