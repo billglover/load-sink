@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"math/rand"
 	"net/http"
@@ -64,4 +65,15 @@ func randomOffset(m int32, r int32) (t int32) {
 	// based on the range provided
 	t = rand.Int31n((2*r)+1) - r + m
 	return
+}
+
+// Echo handles requests to `POST /echo` and returns a response with identical
+// body and Content-Type as the request.
+func (h *Handler) Echo(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
+
+	if r.Body != nil {
+		bodyBytes, _ := ioutil.ReadAll(r.Body)
+		w.Write(bodyBytes)
+	}
 }

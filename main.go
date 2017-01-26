@@ -39,7 +39,10 @@ func main() {
 
 	r := mux.NewRouter()
 	r.HandleFunc("/", h.SendResponse)
+
+	// `POST /echo`
+	r.HandleFunc("/echo", h.Echo).Methods(http.MethodPost)
+
 	http.Handle("/", r)
-	//apiMux.HandleFunc("/", h.SendResponse)
-	//log.Fatal(http.ListenAndServe(APIAddress, apiMux))
+	log.Fatal(http.ListenAndServe(*apiAddress, nil))
 }
