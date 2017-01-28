@@ -5,7 +5,10 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
+
+	"net/url"
 
 	"github.com/gorilla/mux"
 )
@@ -22,6 +25,7 @@ func init() {
 
 	r = mux.NewRouter()
 	r.HandleFunc("/echo", h.Echo).Methods(http.MethodPost)
+	r.PathPrefix("/request").HandlerFunc(h.Request)
 }
 
 func TestGetAPI(t *testing.T) {
@@ -84,5 +88,34 @@ func TestEcho(t *testing.T) {
 		t.Fatal("\tshould match the request Content-Type", ballotX, rw.Header().Get("Content-Type"))
 	}
 	t.Log("\tshould match the request Content-Type", checkMark)
+
+}
+
+func TestRequest(t *testing.T) {
+	t.Log("given the need to test the /request endpoint")
+
+	reqPath := "/request/test/path?foo=bar&foo=baz&key=value"
+	reqMethod := http.MethodPost
+	reqContentType := "application/x-www-form-urlencoded"
+	form := url.Values{}
+	form.Add("name", "form")
+
+	req, err := http.NewRequest(reqMethod, reqPath, strings.NewReader(form.Encode()))
+	if err != nil {
+		t.Fatal("\tshould be able to create a request", ballotX, err)
+	}
+	t.Log("\tshould be able to create a request", checkMark)
+
+	req.Header.Add("Content-Type", reqContentType)
+
+	rw := httptest.NewRecorder()
+	r.ServeHTTP(rw, req)
+
+	if rw.Code != http.StatusOK {
+		t.Fatal("\tshould receive \"200\" response", ballotX, rw.Code)
+	}
+	t.Log("\tshould receive \"200\" response", checkMark)
+
+	// should be a valid HAR object
 
 }

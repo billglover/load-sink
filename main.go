@@ -43,6 +43,9 @@ func main() {
 	// `POST /echo`
 	r.HandleFunc("/echo", h.Echo).Methods(http.MethodPost)
 
+	// `ALL /request/{path}`
+	r.PathPrefix("/request").HandlerFunc(h.Request)
+
 	http.Handle("/", r)
 	log.Fatal(http.ListenAndServe(*apiAddress, nil))
 }

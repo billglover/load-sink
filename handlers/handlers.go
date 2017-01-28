@@ -77,3 +77,9 @@ func (h *Handler) Echo(w http.ResponseWriter, r *http.Request) {
 		w.Write(bodyBytes)
 	}
 }
+
+// Request handles requests to `ALL /request/{path}` and returns a response
+// encoded as an HAR format object.
+func (h *Handler) Request(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
+}
