@@ -7,6 +7,8 @@ import (
 	"math/rand"
 	"net/http"
 	"time"
+
+	"github.com/billglover/load-sink/har"
 )
 
 // APIResponse defines the structure of the response to a GET request on
@@ -81,5 +83,19 @@ func (h *Handler) Echo(w http.ResponseWriter, r *http.Request) {
 // Request handles requests to `ALL /request/{path}` and returns a response
 // encoded as an HAR format object.
 func (h *Handler) Request(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", r.Header.Get("Content-Type"))
+	l, err := har.FromHTTPRequest(r)
+
+	// unable to parse request
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+	}
+
+	w.Header().Set("Content-Type", "application/json; charset=UTF-8")
+	w.WriteHeader(http.StatusOK)
+	err = json.NewEncoder(w).Encode(l)
+
+	// unable to send response
+	if err != nil {
+		panic(err)
+	}
 }

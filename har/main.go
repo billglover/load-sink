@@ -9,16 +9,16 @@ const creator = "load-sink"
 // FromHTTPRequest takes an http.Request and returns a HAR compatibale
 // archive. An error is returned if creation of the archive fails validation
 // or is otherwise impossible.
-func FromHTTPRequest(r *http.Request) (h Log, e error) {
+func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 
-	h.Version = version
-	h.Creator = Creator{
+	h.Log.Version = version
+	h.Log.Creator = Creator{
 		Name:    "load-sink",
 		Version: "0.1",
 	}
 
-	h.Entries = make([]Entry, 1)
-	ent := &h.Entries[0]
+	h.Log.Entries = make([]Entry, 1)
+	ent := &h.Log.Entries[0]
 	ent.StartedDateTime = time.Now()
 	ent.Time = 0
 	ent.Request.Method = r.Method

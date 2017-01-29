@@ -8,6 +8,9 @@ import (
 // The HAR specification defines an archival format for HTTP transactions.
 // Further detail can be found here:
 // https://w3c.github.io/web-performance/specs/HAR/Overview.html
+type HAR struct {
+	Log Log
+}
 
 // Log represents the root of the exported data.
 // This object MUST be present and its name MUST be "log".

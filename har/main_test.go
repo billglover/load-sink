@@ -24,35 +24,36 @@ func TestFromHTTPRequest(t *testing.T) {
 
 	// convert to HAR object
 	h, err := FromHTTPRequest(req)
+	l := &h.Log
 	if err != nil {
 		t.Fatal("\tshould be able to create a HAR object", ballotX, err)
 	}
 	t.Log("\tshould be able to create a HAR object", checkMark)
 
 	// validate HAR object
-	if h.Version != "1.2" {
-		t.Fatal("\tshould contain expected version number", ballotX, h.Version)
+	if l.Version != "1.2" {
+		t.Fatal("\tshould contain expected version number", ballotX, l.Version)
 	}
 	t.Log("\tshould contain expected version number", checkMark)
 
-	if h.Creator.Name == "" {
-		t.Fatal("\tshould contain the creator name", ballotX, h.Creator.Name)
+	if l.Creator.Name == "" {
+		t.Fatal("\tshould contain the creator name", ballotX, l.Creator.Name)
 	}
 	t.Log("\tshould contain the creator name", checkMark)
 
-	if h.Creator.Name == "" {
-		t.Fatal("\tshould contain the creator version", ballotX, h.Creator.Version)
+	if l.Creator.Name == "" {
+		t.Fatal("\tshould contain the creator version", ballotX, l.Creator.Version)
 	}
 	t.Log("\tshould contain the creator version", checkMark)
 
-	if len(h.Entries) == 0 {
-		t.Fatal("\tshould include at least one entry", ballotX, len(h.Entries))
+	if len(l.Entries) == 0 {
+		t.Fatal("\tshould include at least one entry", ballotX, len(l.Entries))
 	}
 	t.Log("\tshould include at least one entry", checkMark)
 
 	// validate the first entry
 	t.Log("\tgiven the need to test the first entry in the log")
-	e := h.Entries[0]
+	e := l.Entries[0]
 
 	if e.StartedDateTime.IsZero() {
 		t.Fatal("\t\tshould include a valid startedDateTime", ballotX, e.StartedDateTime)
