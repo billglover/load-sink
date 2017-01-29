@@ -23,6 +23,7 @@ func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 	ent.Time = 0
 	ent.Request.Method = r.Method
 	ent.Request.URL = r.URL.String()
+	ent.Request.HTTPVersion = r.Proto
 
 	return
 }

@@ -55,24 +55,35 @@ func TestFromHTTPRequest(t *testing.T) {
 	t.Log("\tgiven the need to test the first entry in the log")
 	e := l.Entries[0]
 
+	// Date and time stamp of the request start (ISO 8601 - YYYY-MM-DDThh:mm:ss.sTZD).
 	if e.StartedDateTime.IsZero() {
 		t.Fatal("\t\tshould include a valid startedDateTime", ballotX, e.StartedDateTime)
 	}
 	t.Log("\t\tshould include a valid startedDateTime", checkMark)
 
+	// Total elapsed time of the request in milliseconds. This is the sum of
+	// all timings available in the timings object (i.e. not including -1 values).
 	if e.Time != 0 {
 		t.Fatal("\t\tshould indicate a total processing time of 0 for all requests", ballotX, e.Time)
 	}
 	t.Log("\t\tshould indicate a total processing time of 0 for all requests", checkMark)
 
+	// Request method (GET, POST, ...).
 	if e.Request.Method != req.Method {
 		t.Fatal("\t\tshould have request method of POST", ballotX, e.Request.Method)
 	}
 	t.Log("\t\tshould have request method of POST", checkMark)
 
+	// Absolute URL of the request (fragments are not included).
 	if e.Request.URL != req.URL.String() {
 		t.Fatal("\t\tshould contain the correct URL", ballotX, e.Request.URL)
 	}
 	t.Log("\t\tshould contain the correct URL", checkMark)
+
+	// Request HTTP Version.
+	if e.Request.HTTPVersion != req.Proto {
+		t.Fatal("\t\tshould contain the HTTP version", ballotX, e.Request.HTTPVersion)
+	}
+	t.Log("\t\tshould contain the HTTP version", checkMark)
 
 }
