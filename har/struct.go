@@ -9,7 +9,7 @@ import (
 // Further detail can be found here:
 // https://w3c.github.io/web-performance/specs/HAR/Overview.html
 type HAR struct {
-	Log Log
+	Log Log `json:"log,omitempty"`
 }
 
 // Log represents the root of the exported data.
