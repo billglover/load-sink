@@ -15,167 +15,167 @@ type HAR struct {
 // Log represents the root of the exported data.
 // This object MUST be present and its name MUST be "log".
 type Log struct {
-	Version string
-	Creator Creator
-	Browser Browser `json:"omitempty"`
-	Pages   []Page  `json:"omitempty"`
-	Entries []Entry
-	Comment string `json:"omitempty"`
+	Version string  `json:"version"`
+	Creator Creator `json:"creator"`
+	Browser Browser `json:"browser,omitempty"`
+	Pages   []Page  `json:"pages,omitempty"`
+	Entries []Entry `json:"entries"`
+	Comment string  `json:"comment,omitempty"`
 }
 
 // Creator contains information about the log creator application.
 type Creator struct {
-	Name    string
-	Version string
-	Comment string `json:"omitempty"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Comment string `json:"comment,omitempty"`
 }
 
 // Browser contains information about the browser that created the log.
 type Browser struct {
-	Name    string
-	Version string
-	Comment string `json:"omitempty"`
+	Name    string `json:"name"`
+	Version string `json:"version"`
+	Comment string `json:"comment,omitempty"`
 }
 
 // Page represents an exported page.
 type Page struct {
-	StartedDateTime time.Time
-	ID              string
-	Title           string
-	PageTimings     PageTimings
-	Comment         string `json:"omitempty"`
+	StartedDateTime time.Time   `json:"startedDateTime"`
+	ID              string      `json:"id"`
+	Title           string      `json:"title"`
+	PageTimings     PageTimings `json:"pageTimings"`
+	Comment         string      `json:"omitempty"`
 }
 
 // PageTimings describes timings for various events (states) fired during the
 // page load. All times are specified in milliseconds. If a time info is not
 // available appropriate field is set to -1
 type PageTimings struct {
-	OnContentLoad int    `json:"omitempty"`
-	OnLoad        int    `json:"omitempty"`
-	Comment       string `json:"omitempty"`
+	OnContentLoad int    `json:"onContentLoad,omitempty"`
+	OnLoad        int    `json:"onLoad,omitempty"`
+	Comment       string `json:"comment,omitempty"`
 }
 
 // Entry represents an exported HTTP request.
 type Entry struct {
-	PageRef         string `json:"omitempty"`
-	StartedDateTime time.Time
-	Time            int
-	Request         Request
-	Response        Response
-	Cache           Cache
-	Timings         Timings
-	ServerIPAddress net.IP `json:"omitempty"`
-	Connection      string `json:"omitempty"`
-	Comment         string `json:"omitempty"`
+	PageRef         string    `json:"pageRef,omitempty"`
+	StartedDateTime time.Time `json:"startedDateTime"`
+	Time            int       `json:"time"`
+	Request         Request   `json:"request"`
+	Response        Response  `json:"response"`
+	Cache           Cache     `json:"cache"`
+	Timings         Timings   `json:"timings"`
+	ServerIPAddress net.IP    `json:"serverIPAddress,omitempty"`
+	Connection      string    `json:"omitempty"`
+	Comment         string    `json:"omitempty"`
 }
 
 // Request contains detailed info about performed request.
 type Request struct {
-	Method      string
-	URL         string
-	HTTPVersion string
-	Cookies     []Cookie
-	Headers     []Header
-	QueryString []QueryString
-	PostData    PostData `json:"omitempty"`
-	HeaderSize  int
-	BodySize    int
-	TotalSize   int
-	Comment     string `json:"omitempty"`
+	Method      string        `json:"method"`
+	URL         string        `json:"url"`
+	HTTPVersion string        `json:"httpVersion"`
+	Cookies     []Cookie      `json:"cookies"`
+	Headers     []Header      `json:"headers"`
+	QueryString []QueryString `json:"queryString"`
+	PostData    PostData      `json:"postData,omitempty"`
+	HeadersSize int           `json:"headersSize"`
+	BodySize    int           `json:"bodySize"`
+	TotalSize   int           `json:"totalSize"`
+	Comment     string        `json:"omitempty"`
 }
 
 // Response contains detailed info about performed response.
 type Response struct {
-	Status      int
-	StatusText  string
-	HTTPVersion string
-	Cookies     []Cookie
-	Headers     []Header
-	Content     Content
-	RedirectURL string
-	HeaderSize  int
-	BodySize    int
-	TotalSize   int
-	Comment     string `json:"omitempty"`
+	Status      int      `json:"status"`
+	StatusText  string   `json:"statusText"`
+	HTTPVersion string   `json:"httpVersion"`
+	Cookies     []Cookie `json:"cookies"`
+	Headers     []Header `json:"headers"`
+	Content     Content  `json:"content"`
+	RedirectURL string   `json:"redirectURL"`
+	HeadersSize int      `json:"headersSize"`
+	BodySize    int      `json:"bodySize"`
+	TotalSize   int      `json:"totalSize"`
+	Comment     string   `json:"comment,omitempty"`
 }
 
 // Cookie contains individual cookie information
 type Cookie struct {
-	Name     string
-	Value    string
-	Path     string    `json:"omitempty"`
-	Domain   string    `json:"omitempty"`
-	Expires  time.Time `json:"omitempty"`
-	HTTPOnly bool      `json:"omitempty"`
-	Secure   bool      `json:"omitempty"`
-	Comment  string    `json:"omitempty"`
+	Name     string    `json:"name"`
+	Value    string    `json:"value"`
+	Path     string    `json:"path,omitempty"`
+	Domain   string    `json:"domain,omitempty"`
+	Expires  time.Time `json:"expires,omitempty"`
+	HTTPOnly bool      `json:"httpOnly,omitempty"`
+	Secure   bool      `json:"secure,omitempty"`
+	Comment  string    `json:"comment,omitempty"`
 }
 
 // Header contains individual header information
 type Header struct {
-	Name    string
-	Value   string
-	Comment string `json:"omitempty"`
+	Name    string `json:"name"`
+	Value   string `json:"value"`
+	Comment string `json:"comment,omitempty"`
 }
 
 // QueryString contains an individual querystring parameter
 type QueryString struct {
-	Name    string
-	Value   string
-	Comment string `json:"omitempty"`
+	Name    string `json:"name"`
+	Value   string `json:"value"`
+	Comment string `json:"comment,omitempty"`
 }
 
 // PostData describes posted data
 type PostData struct {
-	MimeType string
-	Params   []Param
-	Text     string
-	Comment  string `json:"omitempty"`
+	MimeType string  `json:"mimeType"`
+	Params   []Param `json:"params"`
+	Text     string  `json:"text"`
+	Comment  string  `json:"comment,omitempty"`
 }
 
 // Param contains an individual parameter
 type Param struct {
-	Name        string
-	Value       string
-	FileName    string
-	ContentType string
-	Comment     string `json:"omitempty"`
+	Name        string `json:"name"`
+	Value       string `json:"value"`
+	FileName    string `json:"fileName"`
+	ContentType string `json:"contentType"`
+	Comment     string `json:"comment,omitempty"`
 }
 
 // Content
 type Content struct {
-	Size        int
-	Compression int `json:"omitempty"`
-	MimeTye     string
-	Text        string `json:"omitempty"`
-	Encoding    string `json:"omitempty"`
-	Comment     string `json:"omitempty"`
+	Size        int    `json:"size"`
+	Compression int    `json:"compression,omitempty"`
+	MimeTye     string `json:"mimeType"`
+	Text        string `json:"text,omitempty"`
+	Encoding    string `json:"encoding,omitempty"`
+	Comment     string `json:"comment,omitempty"`
 }
 
 // Cache contains info about a request coming from browser cache
 type Cache struct {
-	BeforeRequest CacheRequest `json:"omitempty"`
-	AfterRequest  CacheRequest `json:"omitempty"`
-	Comment       string       `json:"omitempty"`
+	BeforeRequest CacheRequest `json:"beforeRequest,omitempty"`
+	AfterRequest  CacheRequest `json:"afterRequest,omitempty"`
+	Comment       string       `json:"comment,omitempty"`
 }
 
 // CacheRequest contains details of the cache for a request
 type CacheRequest struct {
-	Expres     time.Time `json:"omitempty"`
-	LastAccess time.Time
-	ETag       string
-	HitCount   int
-	Comment    string `json:"omitempty"`
+	Expires    time.Time `json:"expires,omitempty"`
+	LastAccess time.Time `json:"lastAccess"`
+	ETag       string    `json:"eTag"`
+	HitCount   int       `json:"hitCount"`
+	Comment    string    `json:"comment,omitempty"`
 }
 
 // Timings describes various phases within the request-response round trip
 type Timings struct {
-	Blocked int `json:"omitempty"`
-	DNS     int `json:"omitempty"`
-	Connect int `json:"omitempty"`
-	Send    int
-	Wait    int
-	Receive int
-	SSL     int    `json:"omitempty"`
-	Comment string `json:"omitempty"`
+	Blocked int    `json:"blocked,omitempty"`
+	DNS     int    `json:"dns,omitempty"`
+	Connect int    `json:"connect,omitempty"`
+	Send    int    `json:"send"`
+	Wait    int    `json:"wait"`
+	Receive int    `json:"receive"`
+	SSL     int    `json:"ssl,omitempty"`
+	Comment string `json:"comment,omitempty"`
 }
