@@ -63,4 +63,15 @@ func TestFromHTTPRequest(t *testing.T) {
 		t.Fatal("\t\tshould indicate a total processing time of 0 for all requests", ballotX, e.Time)
 	}
 	t.Log("\t\tshould indicate a total processing time of 0 for all requests", checkMark)
+
+	if e.Request.Method != req.Method {
+		t.Fatal("\t\tshould have request method of POST", ballotX, e.Request.Method)
+	}
+	t.Log("\t\tshould have request method of POST", checkMark)
+
+	if e.Request.URL != req.URL.String() {
+		t.Fatal("\t\tshould contain the correct URL", ballotX, e.Request.URL)
+	}
+	t.Log("\t\tshould contain the correct URL", checkMark)
+
 }

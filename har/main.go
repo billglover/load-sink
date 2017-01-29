@@ -18,8 +18,11 @@ func FromHTTPRequest(r *http.Request) (h Log, e error) {
 	}
 
 	h.Entries = make([]Entry, 1)
-	h.Entries[0].StartedDateTime = time.Now()
-	h.Entries[0].Time = 0
+	ent := &h.Entries[0]
+	ent.StartedDateTime = time.Now()
+	ent.Time = 0
+	ent.Request.Method = r.Method
+	ent.Request.URL = r.URL.String()
 
 	return
 }
