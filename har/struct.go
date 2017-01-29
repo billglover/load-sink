@@ -81,7 +81,7 @@ type Request struct {
 	Comment     string `json:"omitempty"`
 }
 
-// Response
+// Response contains detailed info about performed response.
 type Response struct {
 	Status      int
 	StatusText  string
