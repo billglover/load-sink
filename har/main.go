@@ -2,6 +2,7 @@ package har
 
 import "net/http"
 import "time"
+import "strings"
 
 const version = "1.2"
 const creator = "load-sink"
@@ -29,6 +30,14 @@ func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 	for i, c := range r.Cookies() {
 		ent.Request.Cookies[i].Name = c.Name
 		ent.Request.Cookies[i].Value = c.Value
+	}
+
+	ent.Request.Headers = make([]Header, len(r.Header))
+	i := 0
+	for key, value := range r.Header {
+		ent.Request.Headers[i].Name = key
+		ent.Request.Headers[i].Value = strings.Join(value, ",")
+		i++
 	}
 
 	return

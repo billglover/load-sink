@@ -22,6 +22,10 @@ func TestFromHTTPRequest(t *testing.T) {
 	}
 	t.Log("\tshould be able to create a request", checkMark)
 
+	// add a custom header
+	req.Header.Add("header_key", "header_value")
+
+	// add a sample cookie
 	c := &http.Cookie{
 		Name:  "cookie_key",
 		Value: "cookie_value",
@@ -58,7 +62,7 @@ func TestFromHTTPRequest(t *testing.T) {
 	t.Log("\tshould include at least one entry", checkMark)
 
 	// validate the first entry
-	t.Log("\tgiven the need to test the first entry in the log")
+	t.Log("\tgiven the need to test the first entry in the HAR Log")
 	e := l.Entries[0]
 
 	// Date and time stamp of the request start (ISO 8601 - YYYY-MM-DDThh:mm:ss.sTZD).
@@ -109,5 +113,22 @@ func TestFromHTTPRequest(t *testing.T) {
 		t.Fatal("\t\tshould contain the value of the Cookie", ballotX, e.Request.Cookies[0].Value)
 	}
 	t.Log("\t\tshould contain the value of the Cookie", checkMark)
+
+	// List of header objects.
+	if len(e.Request.Headers) != 2 {
+		t.Fatal("\t\tshould contain two Headers", ballotX, len(e.Request.Headers))
+	}
+	t.Log("\t\tshould contain two Headers", checkMark)
+
+	hFound := false
+	for _, h := range e.Request.Headers {
+		if strings.ToLower(h.Name) == "header_key" && h.Value == "header_value" {
+			hFound = true
+		}
+	}
+	if hFound == false {
+		t.Fatal("\t\tshould contain the custom Header", ballotX)
+	}
+	t.Fatal("\t\tshould contain the custom Header", checkMark)
 
 }
