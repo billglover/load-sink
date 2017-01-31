@@ -129,6 +129,6 @@ func TestFromHTTPRequest(t *testing.T) {
 	if hFound == false {
 		t.Fatal("\t\tshould contain the custom Header", ballotX)
 	}
-	t.Fatal("\t\tshould contain the custom Header", checkMark)
+	t.Log("\t\tshould contain the custom Header", checkMark)
 
 }
