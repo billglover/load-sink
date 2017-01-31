@@ -22,6 +22,12 @@ func TestFromHTTPRequest(t *testing.T) {
 	}
 	t.Log("\tshould be able to create a request", checkMark)
 
+	c := &http.Cookie{
+		Name:  "cookie_key",
+		Value: "cookie_value",
+	}
+	req.AddCookie(c)
+
 	// convert to HAR object
 	h, err := FromHTTPRequest(req)
 	l := &h.Log
@@ -85,5 +91,23 @@ func TestFromHTTPRequest(t *testing.T) {
 		t.Fatal("\t\tshould contain the HTTP version", ballotX, e.Request.HTTPVersion)
 	}
 	t.Log("\t\tshould contain the HTTP version", checkMark)
+
+	// List of cookie objects.
+	if len(e.Request.Cookies) != 1 {
+		t.Fatal("\t\tshould contain one Cookie", ballotX, len(e.Request.Cookies))
+	}
+	t.Log("\t\tshould contain one Cookie", checkMark)
+
+	// The name of the cookie.
+	if e.Request.Cookies[0].Name != c.Name {
+		t.Fatal("\t\tshould contain the name of the Cookie", ballotX, e.Request.Cookies[0].Name)
+	}
+	t.Log("\t\tshould contain the name of the Cookie", checkMark)
+
+	// The value of the cookie.
+	if e.Request.Cookies[0].Value != c.Value {
+		t.Fatal("\t\tshould contain the value of the Cookie", ballotX, e.Request.Cookies[0].Value)
+	}
+	t.Log("\t\tshould contain the value of the Cookie", checkMark)
 
 }

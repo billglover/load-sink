@@ -25,5 +25,11 @@ func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 	ent.Request.URL = r.URL.String()
 	ent.Request.HTTPVersion = r.Proto
 
+	ent.Request.Cookies = make([]Cookie, len(r.Cookies()))
+	for i, c := range r.Cookies() {
+		ent.Request.Cookies[i].Name = c.Name
+		ent.Request.Cookies[i].Value = c.Value
+	}
+
 	return
 }
