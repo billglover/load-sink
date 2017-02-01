@@ -40,5 +40,13 @@ func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 		i++
 	}
 
+	ent.Request.QueryString = make([]QueryString, len(r.URL.Query()))
+	i = 0
+	for key, value := range r.URL.Query() {
+		ent.Request.QueryString[i].Name = key
+		ent.Request.QueryString[i].Value = strings.Join(value, ",")
+		i++
+	}
+
 	return
 }

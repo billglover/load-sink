@@ -25,6 +25,13 @@ func TestFromHTTPRequest(t *testing.T) {
 	// add a custom header
 	req.Header.Add("header_key", "header_value")
 
+	// add custom QueryString parameters
+	uv := req.URL.Query()
+	uv.Add("query_key", "query_value")
+	uv.Add("query_key_中文", "query_value_中文")
+	uv.Add("query_key_char", "query_value \"&")
+	req.URL.RawQuery = uv.Encode()
+
 	// add a sample cookie
 	c := &http.Cookie{
 		Name:  "cookie_key",
@@ -130,5 +137,47 @@ func TestFromHTTPRequest(t *testing.T) {
 		t.Fatal("\t\tshould contain the custom Header", ballotX)
 	}
 	t.Log("\t\tshould contain the custom Header", checkMark)
+
+	// query string parameters
+	if len(e.Request.QueryString) != 3 {
+		t.Fatal("\t\tshould contain three QueryString parameters", ballotX, len(e.Request.QueryString))
+	}
+	t.Log("\t\tshould contain three QueryString parameters", checkMark)
+
+	qsFound := false
+
+	for _, h := range e.Request.QueryString {
+		if strings.ToLower(h.Name) == "query_key" && h.Value == "query_value" {
+			qsFound = true
+		}
+	}
+	if qsFound == false {
+		t.Fatal("\t\tshould contain a simple query string parameter", ballotX)
+	}
+	t.Log("\t\tshould contain a simple query string parameter", checkMark)
+
+	qsFound = false
+
+	for _, h := range e.Request.QueryString {
+		if strings.ToLower(h.Name) == "query_key_中文" && h.Value == "query_value_中文" {
+			qsFound = true
+		}
+	}
+	if qsFound == false {
+		t.Fatal("\t\tshould contain an international query string parameter", ballotX)
+	}
+	t.Log("\t\tshould contain an international query string parameter", checkMark)
+
+	qsFound = false
+
+	for _, h := range e.Request.QueryString {
+		if strings.ToLower(h.Name) == "query_key_char" && h.Value == "query_value \"&" {
+			qsFound = true
+		}
+	}
+	if qsFound == false {
+		t.Fatal("\t\tshould contain a query string parameter with special characters", ballotX)
+	}
+	t.Log("\t\tshould contain a query string parameter with special characters", checkMark)
 
 }
