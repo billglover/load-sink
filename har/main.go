@@ -1,8 +1,11 @@
 package har
 
-import "net/http"
-import "time"
-import "strings"
+import (
+	"fmt"
+	"net/http"
+	"strings"
+	"time"
+)
 
 const version = "1.2"
 const creator = "load-sink"
@@ -48,5 +51,25 @@ func FromHTTPRequest(r *http.Request) (h HAR, e error) {
 		i++
 	}
 
-	return
+	err := r.ParseForm()
+	if err != nil {
+		return h, fmt.Errorf("unable to parse form: %s", err.Error())
+	}
+
+	if r.Method == http.MethodPost || r.Method == http.MethodPut {
+
+		ent.Request.PostData.Params = make([]Param, len(r.PostForm))
+		i = 0
+		for key, value := range r.PostForm {
+			ent.Request.PostData.Params[i].Name = key
+			ent.Request.PostData.Params[i].Value = strings.Join(value, ",")
+			i++
+		}
+
+		ent.Request.PostData.Text = r.PostForm.Encode()
+
+		ent.Request.PostData.MimeType = r.Header.Get("Content-Type")
+	}
+
+	return h, nil
 }

@@ -14,9 +14,14 @@ func TestFromHTTPRequest(t *testing.T) {
 	t.Log("given the need to test creating a HAR from an http.Request")
 
 	// create sample request
-	form := url.Values{}
-	form.Add("name", "form")
-	req, err := http.NewRequest(http.MethodPost, "https://demo.local/request/sample", strings.NewReader(form.Encode()))
+	f := url.Values{}
+	f.Add("form_key", "form_value")
+	f.Add("form_key_中文", "form_value_中文")
+	f.Add("form_key_char", "form_value \"&")
+
+	fr := strings.NewReader(f.Encode())
+
+	req, err := http.NewRequest(http.MethodPost, "https://demo.local/request/sample", fr)
 	if err != nil {
 		t.Fatal("\tshould be able to create a request", ballotX, err)
 	}
@@ -24,6 +29,7 @@ func TestFromHTTPRequest(t *testing.T) {
 
 	// add a custom header
 	req.Header.Add("header_key", "header_value")
+	req.Header.Add("Content-Type", "application/x-www-form-urlencoded")
 
 	// add custom QueryString parameters
 	uv := req.URL.Query()
@@ -111,21 +117,21 @@ func TestFromHTTPRequest(t *testing.T) {
 
 	// The name of the cookie.
 	if e.Request.Cookies[0].Name != c.Name {
-		t.Fatal("\t\tshould contain the name of the Cookie", ballotX, e.Request.Cookies[0].Name)
+		t.Fatal("\t\t\tshould contain the name of the Cookie", ballotX, e.Request.Cookies[0].Name)
 	}
-	t.Log("\t\tshould contain the name of the Cookie", checkMark)
+	t.Log("\t\t\tshould contain the name of the Cookie", checkMark)
 
 	// The value of the cookie.
 	if e.Request.Cookies[0].Value != c.Value {
-		t.Fatal("\t\tshould contain the value of the Cookie", ballotX, e.Request.Cookies[0].Value)
+		t.Fatal("\t\t\tshould contain the value of the Cookie", ballotX, e.Request.Cookies[0].Value)
 	}
-	t.Log("\t\tshould contain the value of the Cookie", checkMark)
+	t.Log("\t\t\tshould contain the value of the Cookie", checkMark)
 
 	// List of header objects.
-	if len(e.Request.Headers) != 2 {
-		t.Fatal("\t\tshould contain two Headers", ballotX, len(e.Request.Headers))
+	if len(e.Request.Headers) != 3 {
+		t.Fatal("\t\tshould contain three Headers", ballotX, len(e.Request.Headers))
 	}
-	t.Log("\t\tshould contain two Headers", checkMark)
+	t.Log("\t\tshould contain three Headers", checkMark)
 
 	hFound := false
 	for _, h := range e.Request.Headers {
@@ -134,9 +140,9 @@ func TestFromHTTPRequest(t *testing.T) {
 		}
 	}
 	if hFound == false {
-		t.Fatal("\t\tshould contain the custom Header", ballotX)
+		t.Fatal("\t\t\tshould contain the custom Header", ballotX)
 	}
-	t.Log("\t\tshould contain the custom Header", checkMark)
+	t.Log("\t\t\tshould contain the custom Header", checkMark)
 
 	// query string parameters
 	if len(e.Request.QueryString) != 3 {
@@ -152,9 +158,9 @@ func TestFromHTTPRequest(t *testing.T) {
 		}
 	}
 	if qsFound == false {
-		t.Fatal("\t\tshould contain a simple query string parameter", ballotX)
+		t.Fatal("\t\t\tshould contain a simple query string parameter", ballotX)
 	}
-	t.Log("\t\tshould contain a simple query string parameter", checkMark)
+	t.Log("\t\t\tshould contain a simple query string parameter", checkMark)
 
 	qsFound = false
 
@@ -164,9 +170,9 @@ func TestFromHTTPRequest(t *testing.T) {
 		}
 	}
 	if qsFound == false {
-		t.Fatal("\t\tshould contain an international query string parameter", ballotX)
+		t.Fatal("\t\t\tshould contain an international query string parameter", ballotX)
 	}
-	t.Log("\t\tshould contain an international query string parameter", checkMark)
+	t.Log("\t\t\tshould contain an international query string parameter", checkMark)
 
 	qsFound = false
 
@@ -176,8 +182,59 @@ func TestFromHTTPRequest(t *testing.T) {
 		}
 	}
 	if qsFound == false {
-		t.Fatal("\t\tshould contain a query string parameter with special characters", ballotX)
+		t.Fatal("\t\t\tshould contain a query string parameter with special characters", ballotX)
 	}
-	t.Log("\t\tshould contain a query string parameter with special characters", checkMark)
+	t.Log("\t\t\tshould contain a query string parameter with special characters", checkMark)
 
+	// Form values
+	if len(e.Request.PostData.Params) != len(req.PostForm) {
+		t.Fatal("\t\tshould contain the expected number of form parameters", ballotX, len(e.Request.PostData.Params))
+	}
+	t.Log("\t\tshould contain the expected number of form parameters", checkMark)
+
+	fpFound := false
+
+	for _, p := range e.Request.PostData.Params {
+		if p.Name == "form_key" && p.Value == "form_value" {
+			fpFound = true
+		}
+	}
+	if fpFound == false {
+		t.Fatal("\t\t\tshould contain a simple form parameter", ballotX)
+	}
+	t.Log("\t\t\tshould contain a simple form parameter", checkMark)
+
+	fpFound = false
+
+	for _, p := range e.Request.PostData.Params {
+		if p.Name == "form_key_中文" && p.Value == "form_value_中文" {
+			fpFound = true
+		}
+	}
+	if fpFound == false {
+		t.Fatal("\t\t\tshould contain an international form parameter", ballotX)
+	}
+	t.Log("\t\t\tshould contain an international form parameter", checkMark)
+
+	fpFound = false
+
+	for _, p := range e.Request.PostData.Params {
+		if p.Name == "form_key_char" && p.Value == "form_value \"&" {
+			fpFound = true
+		}
+	}
+	if fpFound == false {
+		t.Fatal("\t\t\tshould contain a form parameter with special characters", ballotX)
+	}
+	t.Log("\t\t\tshould contain a form parameter with special characters", checkMark)
+
+	if e.Request.PostData.Text != req.PostForm.Encode() {
+		t.Fatal("\t\t\tshould contain the raw text of the form body", ballotX, e.Request.PostData.Text)
+	}
+	t.Log("\t\t\tshould contain the raw text of the form body", checkMark)
+
+	if e.Request.PostData.MimeType != req.Header.Get("Content-Type") {
+		t.Fatal("\t\t\tshould contain the correct MIME type", ballotX, e.Request.PostData.MimeType)
+	}
+	t.Log("\t\t\tshould contain the correct MIME type", checkMark)
 }
