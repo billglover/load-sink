@@ -43,7 +43,7 @@ type Page struct {
 	ID              string      `json:"id"`
 	Title           string      `json:"title"`
 	PageTimings     PageTimings `json:"pageTimings"`
-	Comment         string      `json:"omitempty"`
+	Comment         string      `json:"comment,omitempty"`
 }
 
 // PageTimings describes timings for various events (states) fired during the
@@ -65,8 +65,8 @@ type Entry struct {
 	Cache           Cache     `json:"cache"`
 	Timings         Timings   `json:"timings"`
 	ServerIPAddress net.IP    `json:"serverIPAddress,omitempty"`
-	Connection      string    `json:"omitempty"`
-	Comment         string    `json:"omitempty"`
+	Connection      string    `json:"connection,omitempty"`
+	Comment         string    `json:"comment,omitempty"`
 }
 
 // Request contains detailed info about performed request.
@@ -81,7 +81,7 @@ type Request struct {
 	HeadersSize int           `json:"headersSize"`
 	BodySize    int           `json:"bodySize"`
 	TotalSize   int           `json:"totalSize"`
-	Comment     string        `json:"omitempty"`
+	Comment     string        `json:"comment,omitempty"`
 }
 
 // Response contains detailed info about performed response.
